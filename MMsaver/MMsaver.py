@@ -32,8 +32,10 @@ class MMsaver:
         os.mkdir(usrdir)
         os.mkdir(os.path.join(usrdir,'audio'))
         os.mkdir(os.path.join(usrdir,'img'))
-
+        os.mkdir(os.path.join(usrdir,'usr'))
+        
         self.copy_all_files(usrmd5,usrdir)
+        self.copy_usr_headshot(usrdir)
 
         t_cs = self.dbworker.cursor()
         t_cs.execute('select * from Chat_%s'%usrmd5)
@@ -41,12 +43,16 @@ class MMsaver:
         u_xhtml_file = open(os.path.join(usrdir,'Message.html'),'w')
         u_xhtml_file.write("<html><head></head><body>")
         yourname = ''
-        if not self.md5_dict[usrmd5][1]:
+        if not self.md5_dict[usrmd5][1].endswith('@chatroom'):
             yourname = self.md5_dict[usrmd5][0]
         for _msg in t_msg_list:
             item_string = self.get_item_string(_msg,yourname)
             u_xhtml_file.write(item_string)
         u_xhtml_file.write("</body></html>")
+
+    def copy_usr_headshot(self,usrdir):
+        for _epic in os.listdir(os.path.join(self.rootdir,'Usr')):
+            shutil.copy(os.path.join(self.rootdir,'Usr',_epic),os.path.join(usrdir,'usr',_epic[:-7]+'jpg'))
     
     def copy_all_files(self,usrmd5,usrdir):
         u_aud_list,u_pic_list = self.get_data_list(usrmd5)
@@ -75,7 +81,8 @@ class MMsaver:
                     #写名字
                     if your_name=='':#群里
                         t_name_index = msg_body.find(':\n')
-                        result += '<li class="who" id="others">%s:</li>'%msg_body[:t_name_index]
+                        result += '<li class="who" id="others"><img src="usr\\%s.jpg"/>'%self.nametomd5[msg_body[:t_name_index]]
+                        result += '%s:</li>'%msg_body[:t_name_index]
                         msg_body = msg_body[t_name_index:]
                     else:
                         result += '<li class="who" id="you">%s:</li>'%your_name
@@ -126,10 +133,13 @@ class MMsaver:
         cursor = self.dbworker.cursor()
         result = cursor.execute('select UsrName,NickName from Friend')
         self.md5_dict={}
+        self.nametomd5={}
         for _eun in result:
             md5_maker = hashlib.md5()
             md5_maker.update(_eun[0])
-            self.md5_dict[md5_maker.hexdigest()]=(_eun[1],_eun[0].endswith('@chatroom'))
+            t_md5 = md5_maker.hexdigest()
+            self.md5_dict[t_md5]=(_eun[1],_eun[0])
+            self.nametomd5[_eun[0]]=t_md5
 
     def cleanup_for_exit(self):
         self.dbworker.commit()
