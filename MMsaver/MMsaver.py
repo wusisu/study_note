@@ -6,7 +6,7 @@ import shutil
 import BeautifulSoup
 import time
 
-CODING='gb2312'
+CODING='utf-8'
 class MMsaver:
 
 
@@ -36,26 +36,17 @@ class MMsaver:
         t_cs = self.dbworker.cursor()
         t_cs.execute('select * from Chat_%s'%usrmd5)
         t_msg_list = t_cs.fetchall()
-
         u_xhtml_file = open(os.path.join(usrdir,'Message.html'),'w')
         u_xhtml_file.write("<html><head></head><body>")
         for _msg in t_msg_list:
-            u_xhtml_file.write('<ul>')
-            u_xhtml_file.write('<li>'+time.localtime(int(_msg[3])).__str__()+'</li>')
-            
-            if _msg[7]==10000:#10000号是腾讯的消息号啊！
-                u_xhtml_file.write('<li>'+_msg[4].encode(CODING,'ignore')+'</li>')
-
-            u_xhtml_file.write('</ul>')
+            item_string = self.get_item_string(_msg)
+            u_xhtml_file.write(item_string)
         u_xhtml_file.write("</body></html>")
-        '''
-        u_aud_count=0
-        u_pic_count=0
+    
+    def copy_all_files(self,usrmd5):
         u_aud_list,u_pic_list = self.get_data_list(usrmd5)
-
         for _epic in u_pic_list:
             shutil.copy(os.path.join(self.rootdir,'Img',usrmd5,_epic),os.path.join(usrdir,'img',_epic[:-3]+'jpg'))
-
         for _eaud in u_aud_list:
             t_source_file = open(os.path.join(self.rootdir,'Audio',usrmd5,_eaud),'rb')
             t_raw = t_source_file.read()
@@ -63,7 +54,18 @@ class MMsaver:
             t_target_file = open(os.path.join(usrdir,'audio',_eaud[:-3]+'amr'),'wb')
             t_target_file.write("#!AMR\n"+t_raw)
             t_target_file.close()
-        '''
+
+    def get_item_string(self,msg):
+            result = ''
+            result += '<ul class="item" id=%d>'%msg[1]
+            t_time = time.localtime(int(msg[3]))
+            result += '<li class="time">%s</li>'%time.asctime(t_time)
+            if msg[7]==10000:#10000号是腾讯的消息号啊！
+                result += '<li class="system_msg">%s</li>'%msg[4].encode(CODING,'ignore')
+            else:
+                pass
+            result += '</ul>'
+
     def get_data_list(self,usrmd5):
         res_aud_list = []
         res_pic_list = []
