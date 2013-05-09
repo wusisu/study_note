@@ -7,11 +7,22 @@ import BeautifulSoup
 import time
 import re
 
-CODING='gb2312'
 class MMsaver:
 
 
     def __init__(self):
+        if sys.platform.startswith('win32'):
+            self.platform='w'
+            self.coding='gbk'
+            self.separater='\\'
+        elif sys.platform.startswith('linux'):
+            self.platform='l'
+            self.coding='utf-8'
+            self.separater='/'
+        else:
+            self.platform='unknown'
+            self.coding='utf-8a'
+            self.separater='/'
         if not self.find_root_dir():print "cannot find the dir"
         self.init_dbworker()
         self.basely_analyze_db()
@@ -36,7 +47,7 @@ class MMsaver:
     
     def output_chat(self,usrmd5):
         dirname = usrmd5[0:7]+'_'+self.validateTitle(self.md5_dict[usrmd5][0])
-        usrdir = os.path.join(self.outputddir,dirname)#.encode(CODING,'ignore'))
+        usrdir = os.path.join(self.outputddir,dirname)#.encode(self.coding,'ignore'))
         os.mkdir(usrdir)
         os.mkdir(os.path.join(usrdir,'audio'))
         os.mkdir(os.path.join(usrdir,'img'))
@@ -54,7 +65,7 @@ class MMsaver:
         for _msg in t_msg_list:
             try:
                 item_string = self.get_item_string(_msg,self.md5_dict[usrmd5][0],self.md5_dict[usrmd5][1].endswith('@chatroom'))
-                u_xhtml_file.write(item_string.encode(CODING,'ignore'))
+                u_xhtml_file.write(item_string.encode('gbk','ignore'))
             except e:
                 print item_string
         u_xhtml_file.write("</body></html>")
@@ -82,20 +93,22 @@ class MMsaver:
             result += '<li class="time">%s</li>'%time.asctime(t_time)
             if msg[7]==10000:#10000号是腾讯的消息号啊！
                 try:
-                    result += '<li class="body" id="system_msg">%s</li>'%msg[4]#.encode(CODING,'ignore')
+                    result += '<li class="body" id="system_msg">%s</li>'%msg[4]#.encode(self.coding,'ignore')
                 except:
                     print msg[4]
             else:
-                msg_body=msg[4]#.encode(CODING,'ignore')
+                msg_body=msg[4]
                 if msg[8]==0:#自己发的
                     result += '<li class="who" id="self">wo:</li>'
                 else:
                     #写名字
                     if is_in_group:#群里
                         t_name_index = msg_body.find(':\n')
-                        result += '<li class="who" id="others"><img src="..\\usr\\%s.jpg"/>'%self.nametomd5[msg_body[:t_name_index]]
-                        result += '%s:</li>'%msg_body[:t_name_index]
-                        msg_body = msg_body[t_name_index:]
+                        if t_name_index:
+                            result += '<li class="who" id="others"><img src="..%susr%s%s.jpg:/>'%(self.separater,
+                                    self.separater,self.nametomd5[msg_body[:t_name_index]])
+                            result += '%s:</li>'%msg_body[:t_name_index]
+                            msg_body = msg_body[t_name_index:]
                     else:
                         result += '<li class="who" id="you">%s:</li>'%your_name
 
@@ -104,7 +117,7 @@ class MMsaver:
                 elif msg[7]==47:#47是表情。emoji的那个。
                     result += '<li class="body" id="emoji">%s</li>'%"emoji"
                 elif msg[7]==34:#voice
-                    result += '<li class="body" id="voice"><a href="audio\\%d.amr">voice</a></li>'%msg[1]
+                    result += '<li class="body" id="voice"><a href="audio%s%d.amr" target=_blank>voice</a></li>'%(self.separater,msg[1])
                 elif msg[7]==3:
                     result += '<li class="body" id="pic"><img src="img\\%d.jpg"/></li>'%msg[1]
                 elif msg[7]==1:
