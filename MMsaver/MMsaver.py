@@ -61,7 +61,8 @@ class MMsaver:
         t_msg_list = t_cs.fetchall()
         u_xhtml_file = open(os.path.join(usrdir,'Message.html'),'w')
         u_xhtml_file.write("<html><head></head><body>")
-        yourname = ''
+        if not self.md5_dict[usrmd5][1].endswith('@chatroom'):
+            u_xhtml_file.write('<img src="..%susr%s%s.jpg"/><br/>'%(self.separater,self.separater,usrmd5))
         for _msg in t_msg_list:
             try:
                 item_string = self.get_item_string(_msg,self.md5_dict[usrmd5][0],self.md5_dict[usrmd5][1].endswith('@chatroom'))
@@ -105,7 +106,7 @@ class MMsaver:
                     if is_in_group:#群里
                         t_name_index = msg_body.find(':\n')
                         if t_name_index:
-                            result += '<li class="who" id="others"><img src="..%susr%s%s.jpg:/>'%(self.separater,
+                            result += '<li class="who" id="others"><img src="..%susr%s%s.jpg"/>'%(self.separater,
                                     self.separater,self.nametomd5[msg_body[:t_name_index]])
                             result += '%s:</li>'%msg_body[:t_name_index]
                             msg_body = msg_body[t_name_index:]
@@ -119,7 +120,7 @@ class MMsaver:
                 elif msg[7]==34:#voice
                     result += '<li class="body" id="voice"><a href="audio%s%d.amr" target=_blank>voice</a></li>'%(self.separater,msg[1])
                 elif msg[7]==3:
-                    result += '<li class="body" id="pic"><img src="img\\%d.jpg"/></li>'%msg[1]
+                    result += '<li class="body" id="pic"><img src="img%s%d.jpg"/></li>'%(self.separater,msg[1])
                 elif msg[7]==1:
                     result += '<li class="body" id="text">%s</li>'%msg_body
                 else:
@@ -248,10 +249,10 @@ if __name__=='__main__':
 
     md5l = []
     for e in a.md5_dict:
-        md5l.append((e,a.md5_dict[e][0].encode('utf-8','ignore')))
+        md5l.append((e,a.md5_dict[e][0].encode('utf-8','ignore'),a.md5_dict[e][1].encode('utf-8','ignore')))
     md5l.sort(compare_md5)
     for e in md5l:
-        f.write(e[0]+' '+e[1])
+        f.write(e[0]+' '+e[1]+'-------'+e[2])
         f.write('\n')
     f.close()
 
