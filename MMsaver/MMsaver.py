@@ -58,7 +58,15 @@ class MMsaver:
         t_cs.execute('select * from Chat_%s'%usrmd5)
         t_msg_list = t_cs.fetchall()
         u_xhtml_file = open(os.path.join(usrdir,'Message.html'),'w')
-        u_xhtml_file.write("<html><head></head><body>")
+        u_xhtml_file.write('''
+                <html><head><style>
+                #voice {width:200px; heigth:60px; text-align:center; line-height:30px; background-color:#CCCCCC;}
+                </style><script>
+                function playmp3(mp3id){
+                    var player="<embed src=audio/"+mp3id+".mp3 width=600 height=50 loop=1>";
+                    document.getElementById(mp3id).innerHTML=player;}
+                    </script></head><body>
+                ''')
         if not self.md5_dict[usrmd5][1].endswith('@chatroom'):
             u_xhtml_file.write('<img src="../usr/%s.jpg"/><br/>'%usrmd5)
         for _msg in t_msg_list:
@@ -116,7 +124,7 @@ class MMsaver:
                 elif msg[7]==47:#47是表情。emoji的那个。
                     result += '<li class="body" id="emoji">%s</li>'%"emoji"
                 elif msg[7]==34:#voice
-                    result += '<li class="body" id="voice"><a href="audio/%d.mp3" target=_blank>voice</a></li>'%msg[1]
+                    result += '<li class="body" id="voice"><div id=%d onclick="playmp3(%d)">voice</div></li>'%(msg[1],msg[1])
                 elif msg[7]==3:
                     result += '<li class="body" id="pic"><img src="img/%d.jpg"/></li>'%msg[1]
                 elif msg[7]==1:
