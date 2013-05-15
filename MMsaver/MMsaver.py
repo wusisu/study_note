@@ -6,6 +6,7 @@ import shutil
 import BeautifulSoup
 import time
 import re
+import amrtomp3
 
 class MMsaver:
 
@@ -14,15 +15,12 @@ class MMsaver:
         if sys.platform.startswith('win32'):
             self.platform='w'
             self.coding='gbk'
-            self.separater='\\'
         elif sys.platform.startswith('linux'):
             self.platform='l'
             self.coding='utf-8'
-            self.separater='/'
         else:
             self.platform='unknown'
             self.coding='utf-8a'
-            self.separater='/'
         if not self.find_root_dir():print "cannot find the dir"
         self.init_dbworker()
         self.basely_analyze_db()
@@ -47,7 +45,7 @@ class MMsaver:
     
     def output_chat(self,usrmd5):
         dirname = usrmd5[0:7]+'_'+self.validateTitle(self.md5_dict[usrmd5][0])
-        usrdir = os.path.join(self.outputddir,dirname)#.encode(self.coding,'ignore'))
+        usrdir = os.path.join(self.outputddir,dirname)#.encode(self.coding,'ignore')
         os.mkdir(usrdir)
         os.mkdir(os.path.join(usrdir,'audio'))
         os.mkdir(os.path.join(usrdir,'img'))
@@ -62,7 +60,7 @@ class MMsaver:
         u_xhtml_file = open(os.path.join(usrdir,'Message.html'),'w')
         u_xhtml_file.write("<html><head></head><body>")
         if not self.md5_dict[usrmd5][1].endswith('@chatroom'):
-            u_xhtml_file.write('<img src="..%susr%s%s.jpg"/><br/>'%(self.separater,self.separater,usrmd5))
+            u_xhtml_file.write('<img src="../usr/%s.jpg"/><br/>'%usrmd5)
         for _msg in t_msg_list:
             try:
                 item_string = self.get_item_string(_msg,self.md5_dict[usrmd5][0],self.md5_dict[usrmd5][1].endswith('@chatroom'))
@@ -86,6 +84,7 @@ class MMsaver:
             t_target_file = open(os.path.join(usrdir,'audio',_eaud[:-3]+'amr'),'wb')
             t_target_file.write("#!AMR\n"+t_raw)
             t_target_file.close()
+            amrtomp3.AmrtoMp3.trans(os.path.join(usrdir,'audio',_eaud[:-3]+'amr'),True)
 
     def get_item_string(self,msg,your_name='',is_in_group=False):
             result = u''
@@ -106,8 +105,7 @@ class MMsaver:
                     if is_in_group:#群里
                         t_name_index = msg_body.find(':\n')
                         if t_name_index:
-                            result += '<li class="who" id="others"><img src="..%susr%s%s.jpg"/>'%(self.separater,
-                                    self.separater,self.nametomd5[msg_body[:t_name_index]])
+                            result += '<li class="who" id="others"><img src="../usr/%s.jpg"/>'%self.nametomd5[msg_body[:t_name_index]]
                             result += '%s:</li>'%msg_body[:t_name_index]
                             msg_body = msg_body[t_name_index:]
                     else:
@@ -118,9 +116,9 @@ class MMsaver:
                 elif msg[7]==47:#47是表情。emoji的那个。
                     result += '<li class="body" id="emoji">%s</li>'%"emoji"
                 elif msg[7]==34:#voice
-                    result += '<li class="body" id="voice"><a href="audio%s%d.amr" target=_blank>voice</a></li>'%(self.separater,msg[1])
+                    result += '<li class="body" id="voice"><a href="audio/%d.mp3" target=_blank>voice</a></li>'%msg[1]
                 elif msg[7]==3:
-                    result += '<li class="body" id="pic"><img src="img%s%d.jpg"/></li>'%(self.separater,msg[1])
+                    result += '<li class="body" id="pic"><img src="img/%d.jpg"/></li>'%msg[1]
                 elif msg[7]==1:
                     result += '<li class="body" id="text">%s</li>'%msg_body
                 else:
