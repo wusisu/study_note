@@ -11,7 +11,7 @@ import amrtomp3
 class MMsaver:
 
 
-    def __init__(self):
+    def __init__(self,isGui=False):
         if sys.platform.startswith('win32'):
             self.platform='w'
             self.coding='gbk'
@@ -21,8 +21,9 @@ class MMsaver:
         else:
             self.platform='unknown'
             self.coding='utf-8a'
-        
-        self.init_no_gui()
+        if not isGui:
+            self.init_no_gui()
+            
     def init_no_gui(self):
         if not self.find_root_dir():print "cannot find the dir"
         self.init_dbworker()
@@ -30,9 +31,7 @@ class MMsaver:
         self.init_output_dir()
 
     def dothejob(self):
-        os.mkdir(os.path.join(self.outputddir,'usr'))
-        self.copy_usr_headshot(self.outputddir)
-        
+        self.copy_usr_headshot()        
         for ec in self.chat_tables:
             self.output_chat(ec)
 
@@ -80,9 +79,10 @@ class MMsaver:
                 print item_string
         u_xhtml_file.write("</body></html>")
 
-    def copy_usr_headshot(self,usrdir):
+    def copy_usr_headshot(self):
+        os.mkdir(os.path.join(self.outputddir,'usr'))
         for _epic in os.listdir(os.path.join(self.rootdir,'Usr')):
-            shutil.copy(os.path.join(self.rootdir,'Usr',_epic),os.path.join(usrdir,'usr',_epic[:-7]+'jpg'))
+            shutil.copy(os.path.join(self.rootdir,'Usr',_epic),os.path.join(self.outputddir,'usr',_epic[:-7]+'jpg'))
     
     def copy_all_files(self,usrmd5,usrdir):
         u_aud_list,u_pic_list = self.get_data_list(usrmd5)
@@ -184,7 +184,7 @@ class MMsaver:
             md5_maker = hashlib.md5()
             md5_maker.update(_eun[0])
             t_md5 = md5_maker.hexdigest()
-            self.md5_dict[t_md5]=(_eun[1],_eun[0])
+            self.md5_dict[t_md5]=(_eun[1],_eun[0])#先存nickname 后存usrname
             self.nametomd5[_eun[0]]=t_md5
 
     def cleanup_for_exit(self):
@@ -204,11 +204,10 @@ class MMsaver:
 
     def find_root_dir(self,path=''):
         l_searching_path = os.path.abspath(path)
-        if self._is_root_dir(l_searching_path):
-            return
-
         l_find_parent_dir_times = 5
         while l_find_parent_dir_times>0:
+            if self._is_root_dir(l_searching_path):
+                return            
             t_files_dirs = os.listdir(l_searching_path)
             if "Documents" in t_files_dirs:
                 l_searching_path = os.path.join(l_searching_path,\
