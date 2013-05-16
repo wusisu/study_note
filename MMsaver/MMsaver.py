@@ -21,6 +21,9 @@ class MMsaver:
         else:
             self.platform='unknown'
             self.coding='utf-8a'
+        
+        self.init_no_gui()
+    def init_no_gui(self):
         if not self.find_root_dir():print "cannot find the dir"
         self.init_dbworker()
         self.basely_analyze_db()
@@ -92,7 +95,7 @@ class MMsaver:
             t_target_file = open(os.path.join(usrdir,'audio',_eaud[:-3]+'amr'),'wb')
             t_target_file.write("#!AMR\n"+t_raw)
             t_target_file.close()
-            amrtomp3.AmrtoMp3.trans(os.path.join(usrdir,'audio',_eaud[:-3]+'amr'),True)
+            amrtomp3.AmrtoMp3.trans(os.path.join(usrdir,'audio',_eaud[:-3]+'amr'),False)
 
     def get_item_string(self,msg,your_name='',is_in_group=False):
             result = u''

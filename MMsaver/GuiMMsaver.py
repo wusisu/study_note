@@ -3,6 +3,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import sys
 import os
+import MMsaver
 #import shutil
 
 isWin=lambda:sys.platform.startswith('win32')
@@ -24,15 +25,36 @@ class GuiMMsaver(QDialog):
         
     def _init_connect(self):
         self.connect(self.resetbutton, SIGNAL("clicked()"),self.resetbutton_onclicked)
+        self.connect(self.select_directory_button,SIGNAL("clicked()"),self.select_directory_button_onclicked)
         
-    def resetbutton_onclicked(self):
-        self.title_label.setText(QString('gafgsd'))
+    def init_directory(self):
+        if not os.path.exists(self.directory_path):
+            self.msg_text_browser.setText(self.directory_path+" does not exist!")
+            return
+        
+    def resetbutton_onclicked(self,temp="reset"):
+        if self.msg_object_layout:
+            self.msg_layout.removeItem(self.msg_object_layout)
+            for i in self.msg_object_layout.findChildren(QPushButton):
+                i.hide()
+                i.deleteLater()
+            self.msg_object_layout.deleteLater()
+            self.msg_object_layout = None
+        self.msg_text_browser.hide()
+        self.msg_object_layout = QGridLayout()
+        for i in temp:
+            t_label = QPushButton()
+            t_label.setText(i)
+            self.msg_object_layout.addWidget(t_label)
+        self.msg_layout.addLayout(self.msg_object_layout)
+            
+            
     def select_directory_button_onclicked(self):
-        self.schedules_path = QFileDialog.getExistingDirectory(self,
+        self.directory_path = QFileDialog.getExistingDirectory(self,
                                                                caption = QString(),
                                                                directory = QString(),
-                                                               option = QFileDialog.ShowDirsOnly)
-
+                                                               options = QFileDialog.ShowDirsOnly)
+        #self.resetbutton.hide()
     def _set_windows(self):
         t_dt = QApplication.desktop().screenGeometry()
         t_left = (t_dt.width() - self.my_width) / 2
@@ -52,12 +74,13 @@ class GuiMMsaver(QDialog):
         if True:
             if True:
                 if True:
-                    self.title_label = QLabel()
-                    self.title_label.setGeometry(0,0,self.my_width*4/5,self.my_height*4/5)
-                    self.title_label.setText(QString('msg label'))
-                msg_Layout = QVBoxLayout()
-                msg_Layout.addWidget(self.title_label)
-                    
+                    self.msg_text_browser = QTextBrowser()
+                    self.msg_text_browser.setText(QString('msg label'))
+                    self.msg_text_browser_layout = QVBoxLayout()
+                    self.msg_text_browser_layout.addWidget(self.msg_text_browser)
+                self.msg_layout = QVBoxLayout()
+                self.msg_layout.addLayout(self.msg_text_browser_layout)
+                self.msg_object_layout = None
                 if True:
                     self.resetbutton = QPushButton()
                     self.resetbutton.setText(QString('reset'))
@@ -70,7 +93,7 @@ class GuiMMsaver(QDialog):
                 button_Layout.addWidget(self.resetbutton)
                 
             first_line_Layout = QHBoxLayout()
-            first_line_Layout.addLayout(msg_Layout)
+            first_line_Layout.addLayout(self.msg_layout)
             first_line_Layout.addLayout(button_Layout)
 
         mLayout = QVBoxLayout()
