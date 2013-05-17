@@ -34,7 +34,6 @@ class GuiMMsaver(QDialog):
     def _add_list_widget(self):
         self.msg_text_browser.hide()
         if self.usrlist_widget:
-            print self.usrlist_widget
             self.usrlist_widget.hide()
             self.msg_layout.removeWidget(self.usrlist_widget)
 
@@ -50,13 +49,13 @@ class GuiMMsaver(QDialog):
         self.msg_layout.addWidget(self.usrlist_widget)
         
     def resetbutton_onclicked(self,temp="reset"):
-        self.msg_text_browser.hide()
-        self.msg_object_layout = QGridLayout()
-        for i in temp:
-            t_label = QPushButton()
-            t_label.setText(i)
-            self.msg_object_layout.addWidget(t_label)
-        self.msg_layout.addLayout(self.msg_object_layout)
+        self.msg_text_browser.show()
+        if self.usrlist_widget:
+            self.usrlist_widget.hide()
+            self.msg_layout.removeWidget(self.usrlist_widget)
+        self.bottom_msg_label.setText('')
+        self.progress_bar.reset()
+        
         
     def select_directory_button_onclicked(self):
         self.directory_path = QFileDialog.getExistingDirectory(self,
@@ -79,13 +78,14 @@ class GuiMMsaver(QDialog):
         t_list = self.usrlist_widget.selectedItems()
         if not len(t_list):
             return
-        self.progress_bar.setRange(0,len(t_list))
+        self.progress_bar.setRange(0,len(t_list)+1)
         self.progress_bar.setValue(0)
         for _i in t_list:
             self.bottom_msg_label.setText('dealing with '+_i._usr)
-            self.progress_bar.setValue(self.progress_bar.value()+1)
             self.mmsaver.output_chat(_i._usr)
+            self.progress_bar.setValue(self.progress_bar.value()+1)
         self.bottom_msg_label.setText('succeed!')
+        self.progress_bar.setValue(self.progress_bar.value()+1)
         os.startfile(self.mmsaver.outputddir)
         
 
@@ -98,10 +98,10 @@ class GuiMMsaver(QDialog):
         t_top = (t_dt.height() - self.my_height) / 2
         self.setGeometry(QRect(t_left,t_top,self.my_width,self.my_height))
     def _set_button_geomatry_range(self,button):
-        ts_buttom_min_height = 10
-        ts_buttom_max_height = 60
-        ts_buttom_min_width = 10
-        ts_buttom_max_width = 60
+        ts_buttom_min_height = 40
+        ts_buttom_max_height = 80
+        ts_buttom_min_width = 40
+        ts_buttom_max_width = 80
         button.setMaximumSize(ts_buttom_max_width,ts_buttom_max_height)
         button.setMinimumSize(ts_buttom_min_width,ts_buttom_min_height)
     

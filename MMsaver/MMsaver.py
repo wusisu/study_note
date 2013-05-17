@@ -105,7 +105,7 @@ class MMsaver:
             t_target_file = open(os.path.join(usrdir,'audio',_eaud[:-3]+'amr'),'wb')
             t_target_file.write("#!AMR\n"+t_raw)
             t_target_file.close()
-            amrtomp3.AmrtoMp3.trans(os.path.join(usrdir,'audio',_eaud[:-3]+'amr'),False)
+            amrtomp3.AmrtoMp3.trans(os.path.join(usrdir,'audio',_eaud[:-3]+'amr'),True)
 
     def get_item_string(self,msg,your_name='',is_in_group=False):
             result = u''
