@@ -79,11 +79,16 @@ class GuiMMsaver(QDialog):
         t_list = self.usrlist_widget.selectedItems()
         if not len(t_list):
             return
+        self.progress_bar.setRange(0,len(t_list))
+        self.progress_bar.setValue(0)
         for _i in t_list:
+            self.bottom_msg_label.setText('dealing with '+_i._usr)
+            self.progress_bar.setValue(self.progress_bar.value()+1)
             self.mmsaver.output_chat(_i._usr)
         self.bottom_msg_label.setText('succeed!')
+        os.startfile(self.mmsaver.outputddir)
         
-        
+
     def close_button_onclicked(self):
         self.close()
         
@@ -107,7 +112,7 @@ class GuiMMsaver(QDialog):
             if True:
                 if True:
                     self.msg_text_browser = QTextBrowser()
-                    self.msg_text_browser.setText(QString('msg label'))
+                    self.msg_text_browser.setText(QString('Welcome to Sunmile'))
                 self.msg_layout = QVBoxLayout()
                 self.msg_layout.addWidget(self.msg_text_browser)
                 if True:
@@ -134,14 +139,19 @@ class GuiMMsaver(QDialog):
             first_line_Layout.addLayout(button_Layout)
             
             if True:
-                self.bottom_msg_label = QLabel()
-            
+                self.progress_bar = QProgressBar()
             second_line_Layout = QHBoxLayout()
-            second_line_Layout.addWidget(self.bottom_msg_label)
+            second_line_Layout.addWidget(self.progress_bar)
+            
+            if True:
+                self.bottom_msg_label = QLabel()
+            bottom_line_Layout = QHBoxLayout()
+            bottom_line_Layout.addWidget(self.bottom_msg_label)
             
         mLayout = QVBoxLayout()
         mLayout.addLayout(first_line_Layout)
         mLayout.addLayout(second_line_Layout)
+        mLayout.addLayout(bottom_line_Layout)
         self.setLayout(mLayout)
 
     def _close(self):

@@ -48,6 +48,8 @@ class MMsaver:
     def output_chat(self,usrmd5):
         dirname = usrmd5[0:7]+'_'+self.validateTitle(self.md5_dict[usrmd5][0])
         usrdir = os.path.join(self.outputddir,dirname)#.encode(self.coding,'ignore')
+        if os.path.exists(usrdir):
+            shutil.rmtree(usrdir)
         os.mkdir(usrdir)
         os.mkdir(os.path.join(usrdir,'audio'))
         os.mkdir(os.path.join(usrdir,'img'))
@@ -69,7 +71,9 @@ class MMsaver:
                     document.getElementById(mp3id).innerHTML=player;}
                     </script></head><body>
                 ''')
-        if not self.md5_dict[usrmd5][1].endswith('@chatroom'):
+        if os.path.exists(os.path.join(self.outputddir,'usr',usrmd5+'_hd.jpg')):
+            u_xhtml_file.write('<img src="../usr/%s_hd.jpg"/><br/>'%usrmd5)
+        else:
             u_xhtml_file.write('<img src="../usr/%s.jpg"/><br/>'%usrmd5)
         for _msg in t_msg_list:
             try:
@@ -80,10 +84,16 @@ class MMsaver:
         u_xhtml_file.write("</body></html>")
 
     def copy_usr_headshot(self):
-        os.mkdir(os.path.join(self.outputddir,'usr'))
+        t_usr_dir = os.path.join(self.outputddir,'usr')
+        if os.path.exists(t_usr_dir):
+            shutil.rmtree(t_usr_dir)
+        os.mkdir(t_usr_dir)
         for _epic in os.listdir(os.path.join(self.rootdir,'Usr')):
-            shutil.copy(os.path.join(self.rootdir,'Usr',_epic),os.path.join(self.outputddir,'usr',_epic[:-7]+'jpg'))
-    
+            if _epic.endswith('.pic_usr'):
+                shutil.copy(os.path.join(self.rootdir,'Usr',_epic),os.path.join(self.outputddir,'usr',_epic[:-8]+'.jpg'))
+            elif _epic.endswith('.pic_hd'):
+                shutil.copy(os.path.join(self.rootdir,'Usr',_epic),os.path.join(self.outputddir,'usr',_epic[:-7]+'_hd.jpg'))
+
     def copy_all_files(self,usrmd5,usrdir):
         u_aud_list,u_pic_list = self.get_data_list(usrmd5)
         for _epic in u_pic_list:
@@ -117,7 +127,7 @@ class MMsaver:
                         t_name_index = msg_body.find(':\n')
                         if t_name_index:
                             result += '<li class="who" id="others"><img src="../usr/%s.jpg"/>'%self.nametomd5[msg_body[:t_name_index]]
-                            result += '%s:</li>'%msg_body[:t_name_index]
+                            result += '%s:</li>'%self.md5_dict[self.nametomd5[msg_body[:t_name_index]]][0]
                             msg_body = msg_body[t_name_index:]
                     else:
                         result += '<li class="who" id="you">%s:</li>'%your_name
