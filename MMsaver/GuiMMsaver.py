@@ -4,6 +4,8 @@ from PyQt4.QtGui import *
 import sys
 import os
 import MMsaver
+import time
+import atexit
 #import shutil
 
 isWin=lambda:sys.platform.startswith('win32')
@@ -40,6 +42,7 @@ class GuiMMsaver(QDialog):
             
         self.usrlist_widget = QListWidget()
         for _usr in self.mmsaver.chat_tables:
+            print os.path.join(self.mmsaver.outputddir,'usr',_usr+'.jpg')
             t_icon = QIcon(os.path.join(self.mmsaver.outputddir,'usr',_usr+'.jpg'))
             t_item = QListWidgetItem(t_icon,self.mmsaver.md5_dict[_usr][0])
             t_item._usr = _usr
@@ -62,7 +65,8 @@ class GuiMMsaver(QDialog):
                                                                caption = QString(),
                                                                directory = QString(),
                                                                options = QFileDialog.ShowDirsOnly)
-        if not self.mmsaver.find_root_dir():
+        print self.directory_path
+        if not self.mmsaver.find_root_dir(self.directory_path):
             self.bottom_msg_label.setText('This directory is not I desired')
             return
         
@@ -70,6 +74,7 @@ class GuiMMsaver(QDialog):
         self.mmsaver.basely_analyze_db()
         self.mmsaver.init_output_dir()
         self.mmsaver.copy_usr_headshot()
+        time.sleep(2)
         self._add_list_widget()
     
     def export_button_onclicked(self):
