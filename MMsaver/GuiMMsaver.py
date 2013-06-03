@@ -67,12 +67,12 @@ class GuiMMsaver(QDialog):
                                                                options = QFileDialog.ShowDirsOnly)
         print self.directory_path
         if not self.mmsaver.find_root_dir(self.directory_path):
-            self.bottom_msg_label.setText('This directory is not I desired')
+            self.bottom_msg_label.setText('This directory is not which I desired')
             return
         
         self.mmsaver.init_dbworker()
         self.mmsaver.basely_analyze_db()
-        self.mmsaver.init_output_dir()
+        self.mmsaver.init_output_dir(True)
         self.mmsaver.copy_usr_headshot()
         time.sleep(2)
         self._add_list_widget()

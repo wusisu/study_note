@@ -7,6 +7,7 @@ import BeautifulSoup
 import time
 import re
 import amrtomp3
+from PIL import Image
 
 class MMsaver:
 
@@ -91,6 +92,8 @@ class MMsaver:
         for _epic in os.listdir(os.path.join(self.rootdir,'Usr')):
             if _epic.endswith('.pic_usr'):
                 shutil.copy(os.path.join(self.rootdir,'Usr',_epic),os.path.join(self.outputddir,'usr',_epic[:-8]+'.jpg'))
+                #t_img = Image.open(os.path.join(self.rootdir,'Usr',_epic))
+                #t_img.save(os.path.join(self.outputddir,'usr',_epic[:-8]+'.png'),format="png")
             elif _epic.endswith('.pic_hd'):
                 shutil.copy(os.path.join(self.rootdir,'Usr',_epic),os.path.join(self.outputddir,'usr',_epic[:-7]+'_hd.jpg'))
 
@@ -201,10 +204,13 @@ class MMsaver:
         self.dbworker.commit()
         self.dbworker.close()
 
-    def init_output_dir(self):
+    def init_output_dir(self, delete_it = True):
         self.outputddir = os.path.join(os.path.curdir,'output')
         if os.path.exists(self.outputddir):
-            shutil.rmtree(self.outputddir)
+            if delete_it:
+                shutil.rmtree(self.outputddir)
+            else:
+                return
         os.mkdir(self.outputddir)
 
 
