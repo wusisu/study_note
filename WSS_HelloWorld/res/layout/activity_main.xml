@@ -1,0 +1,140 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/hello_world" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/editText_ans"
+        android:layout_alignBottom="@+id/editText_ans"
+        android:layout_alignLeft="@+id/textView1"
+        android:text="@string/ans" />
+
+    <TextView
+        android:id="@+id/TextView01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/editText_num1"
+        android:layout_alignLeft="@+id/textView2"
+        android:text="num1" />
+
+    <TextView
+        android:id="@+id/TextView02"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/editText_num3"
+        android:layout_alignLeft="@+id/TextView01"
+        android:text="num2" />
+
+    <TextView
+        android:id="@+id/TextView03"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/editText_num3"
+        android:layout_alignLeft="@+id/TextView02"
+        android:text="num3" />
+
+    <TextView
+        android:id="@+id/TextView04"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/editText_num4"
+        android:layout_alignLeft="@+id/TextView03"
+        android:text="num4" />
+
+    <EditText
+        android:id="@+id/editText_num1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/editText_ans"
+        android:layout_below="@+id/editText_ans"
+        android:ems="10"
+        android:inputType="number"
+        android:text="1" />
+
+    <EditText
+        android:id="@+id/editText_num2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/editText_num1"
+        android:layout_below="@+id/editText_num1"
+        android:ems="10"
+        android:inputType="number"
+        android:text="2" >
+
+    </EditText>
+
+    <EditText
+        android:id="@+id/editText_num3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/editText_num2"
+        android:layout_below="@+id/editText_num2"
+        android:ems="10"
+        android:inputType="number"
+        android:text="3" />
+
+    <EditText
+        android:id="@+id/editText_num4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/editText_num3"
+        android:layout_below="@+id/editText_num3"
+        android:ems="10"
+        android:inputType="number"
+        android:text="4" />
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/editText_num4"
+        android:layout_marginBottom="17dp"
+        android:onClick="myExit"
+        android:text="@string/exit" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/button1"
+        android:layout_alignBottom="@+id/button1"
+        android:layout_alignLeft="@+id/TextView04"
+        android:onClick="onCalcButtonClicked"
+        android:text="Calc" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/button1"
+        android:layout_alignBottom="@+id/button1"
+        android:layout_toRightOf="@+id/textView1"
+        android:text="Reset" />
+
+    <EditText
+        android:id="@+id/editText_ans"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/textView1"
+        android:layout_marginTop="18dp"
+        android:ems="10"
+        android:inputType="number"
+        android:text="24" />
+
+</RelativeLayout>
