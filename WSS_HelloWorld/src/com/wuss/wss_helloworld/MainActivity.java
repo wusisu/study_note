@@ -143,6 +143,7 @@ public class MainActivity extends Activity {
 		private void calculateManager(ArrayList<Integer> op, ArrayList<Double> num_list, ArrayList<String> expr_list){
 			if (num_list.size() == 1) {
 				if (num_list.get(0).equals(Ans)){
+					if (!Result_Data.contains(expr_list.get(0)))
 					Result_Data.add(expr_list.get(0));
 				}
 				return;
