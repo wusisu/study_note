@@ -20,7 +20,7 @@ md5_dict = {}
 ts = calc_md5(str(datetime.datetime.now()))[:6] + '_'
 
 for fn in oldlist:
-    if fn.lower.endswith('.jpg'):
+    if fn.lower().endswith('.jpg'):
         t_md5 = calc_md5(open(fn,'rb').read())
         if not md5_dict.has_key(t_md5):
             md5_dict[t_md5] = []
