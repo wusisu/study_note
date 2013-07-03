@@ -29,6 +29,3 @@ class AmrtoMp3():
         os.system("lame audiodump.wav -o " + file_addr[:-3].encode('utf-8')+'mp3' + " -b %d"%bit_rate)
         os.remove("audiodump.wav")
 
-
-if __name__=='__main__':
-    AmrtoMp3.trans(u'./output/19f34ba_百度贴吧/audio/8.amr',False)

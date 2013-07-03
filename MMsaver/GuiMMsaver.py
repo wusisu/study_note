@@ -42,7 +42,6 @@ class GuiMMsaver(QDialog):
             
         self.usrlist_widget = QListWidget()
         for _usr in self.mmsaver.chat_tables:
-            print os.path.join(self.mmsaver.outputddir,'usr',_usr+'.jpg')
             t_icon = QIcon(os.path.join(self.mmsaver.outputddir,'usr',_usr+'.jpg'))
             t_item = QListWidgetItem(t_icon,self.mmsaver.md5_dict[_usr][0])
             t_item._usr = _usr
@@ -65,7 +64,6 @@ class GuiMMsaver(QDialog):
                                                                caption = QString(),
                                                                directory = QString(),
                                                                options = QFileDialog.ShowDirsOnly)
-        print self.directory_path
         if not self.mmsaver.find_root_dir(self.directory_path):
             self.bottom_msg_label.setText('This directory is not which I desired')
             return

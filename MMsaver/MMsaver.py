@@ -7,6 +7,7 @@ import BeautifulSoup
 import time
 import re
 import amrtomp3
+from rebuildbmphead import Rebuild_BMP_Head
 from PIL import Image
 
 class MMsaver:
@@ -84,18 +85,27 @@ class MMsaver:
                 print item_string
         u_xhtml_file.write("</body></html>")
 
+    def convert_pic_to_jpg(self,oldpath,newpath):
+        try:
+            t_img = Image.open(oldpath)
+        except:
+            if Rebuild_BMP_Head.convert(oldpath,'temp.bmp'):
+                t_img = Image.open('temp.bmp')
+            else:
+                shutil.copy(oldpath,newpath)
+                return
+        t_img = t_img.convert('RGB')
+        t_img.save(newpath)
+
     def copy_usr_headshot(self):
         t_usr_dir = os.path.join(self.outputddir,'usr')
         if os.path.exists(t_usr_dir):
             shutil.rmtree(t_usr_dir)
         os.mkdir(t_usr_dir)
         for _epic in os.listdir(os.path.join(self.rootdir,'Usr')):
-            if _epic.endswith('.pic_usr'):
-                shutil.copy(os.path.join(self.rootdir,'Usr',_epic),os.path.join(self.outputddir,'usr',_epic[:-8]+'.jpg'))
-                #t_img = Image.open(os.path.join(self.rootdir,'Usr',_epic))
-                #t_img.save(os.path.join(self.outputddir,'usr',_epic[:-8]+'.png'),format="png")
-            elif _epic.endswith('.pic_hd'):
-                shutil.copy(os.path.join(self.rootdir,'Usr',_epic),os.path.join(self.outputddir,'usr',_epic[:-7]+'_hd.jpg'))
+            self.convert_pic_to_jpg(os.path.join(self.rootdir,'Usr',_epic),
+                                    os.path.join(self.outputddir,'usr',
+                                                 os.path.splitext(_epic)[0]+'.jpg'))
 
     def copy_all_files(self,usrmd5,usrdir):
         u_aud_list,u_pic_list = self.get_data_list(usrmd5)
