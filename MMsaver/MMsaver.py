@@ -229,7 +229,7 @@ class MMsaver:
 
 
     def find_root_dir(self,path=''):
-        l_searching_path = os.path.abspath(path)
+        l_searching_path = os.path.abspath(str(path))
         l_find_parent_dir_times = 5
         while l_find_parent_dir_times>0:
             if self._is_root_dir(l_searching_path):
